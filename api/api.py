@@ -13,16 +13,20 @@ app = APIRouter()
 # Routes
 @app.post("/images/{category}")
 async def upload_images(images: List[UploadFile] = File(...), category: str = None):
-    collection = get_collection(category)
-    
-    for image in images:
-        contents = await image.read()
-        db_image = {
-            'name': image.filename,
-            'data': Binary(contents)
-        }
-        collection.insert_one(db_image)
-    return {"message": "Images uploaded successfully."}
+
+    try:
+        collection = get_collection(category)
+        
+        for image in images:
+            contents = await image.read()
+            db_image = {
+                'name': image.filename,
+                'data': Binary(contents)
+            }
+            collection.insert_one(db_image)
+        return {"message": "Images uploaded successfully."}
+    except:
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @app.get("/images/{category}")
