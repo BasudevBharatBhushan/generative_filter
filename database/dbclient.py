@@ -4,8 +4,9 @@ import logging
 
 load_dotenv()
 
-db_config = dotenv_values(".env")
-DB_URL = db_config.get("DB_URL")
+# db_config = dotenv_values(".env")
+# DB_URL = db_config.get("DB_URL")
+DB_URL = 'mongodb+srv://admin-basudev:OoAkYrt6dz3DGZQF@cluster0.nbsww.mongodb.net/?retryWrites=true&w=majority'
 
 if DB_URL is None:
     logging.error("DB_URL not found in environment variables")
