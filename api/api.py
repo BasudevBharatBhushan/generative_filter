@@ -30,12 +30,11 @@ async def upload_images(images: List[UploadFile] = File(...), category: str = No
 
 
 @app.get("/images/{category}")
-async def get_images(category: str = None):
+async def get_images(category: str = None, skip: int = 0, next: int = 4):
     try:
         collection = get_collection(category)
 
-        
-        images = collection.find({})
+        images = collection.find({}).skip(skip).limit(next)
         if images is None:
             raise HTTPException(status_code=404, detail="No images found")
         response_images = []
@@ -88,9 +87,9 @@ async def generate_image(background_id: str, body_id: str, clothes_id: str, gogg
 
 
 @app.get("/generated-image/all")
-async def get_all_generated_image():
+async def get_all_generated_image(skip: int = 0, next: int = 4):
     try:
-        generated_images = generated_images_collection.find({})
+        generated_images = generated_images_collection.find({}).skip(skip).limit(next)
         if generated_images is None:
             raise HTTPException(status_code=404, detail="No images found")
         response_images = []
