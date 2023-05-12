@@ -165,10 +165,11 @@ async def get_all_generated_image(skip: int = 0, next: int = 4):
                 "id": str(image.get("_id")),
                 "name": image.get("name"),
                 "blended_images": image.get("blended_images"),
-                "data": str(base64.b64encode(image.get("data")), 'utf-8')
+                "data": image.get("data")
             })
-        return {"images": response_images}
-    except:
+        return {"generated_images": response_images}
+    except Exception as e:
+        logging.error(f"Failed to get all generated images: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @app.get("/generated-image/{image_id}")
@@ -177,10 +178,11 @@ async def get_generated_image(image_id: str):
         generated_image = generated_images_collection.find_one({'_id': ObjectId(image_id)})
         if generated_image is None:
             raise HTTPException(status_code=404, detail="Image not found")
-        filename = generated_image['name']
-        contents = str(base64.b64encode(generated_image['data']), 'utf-8')
+        filename = generated_image.get('name')
+        contents = generated_image.get('data')
         return {"id": str(generated_image.get("_id")), "name": filename, "blended_images": generated_image.get("blended_images"), "data": contents}
-    except:
+    except Exception as e:
+        logging.error(f"Failed to get generated image: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
